@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "trifl"
+version = "0.1.0"
+description = "TRIFL is a data filtration library for MS-proteomics experiments."
+authors = ["Radu Suciu <radusuciu@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "3.9"
+beautifulsoup4 = "^4.9.3"
+biopython = "^1.78"
+click = "^8.0.1"
+pandas = "^1.2.4"
+peewee = "^3.14.4"
+PyYAML = "^5.4.1"
+requests = "^2.25.1"
+numpy = "^1.20.3"
+scipy = "^1.6.3"
+
+[tool.poetry.dev-dependencies]
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
