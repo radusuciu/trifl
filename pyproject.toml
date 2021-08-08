@@ -6,7 +6,7 @@ authors = ["Radu Suciu <radusuciu@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "3.9"
+python = "^3.9"
 beautifulsoup4 = "^4.9.3"
 biopython = "^1.78"
 click = "^8.0.1"
