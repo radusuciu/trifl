@@ -19,7 +19,7 @@ import pandas as pd
 # base modules
 from dataclasses import dataclass
 from typing import Optional
-from functools import partial
+from functools import partial, reduce
 from collections import defaultdict
 from collections.abc import Iterable
 from abc import ABC, abstractmethod
@@ -223,6 +223,19 @@ class SilacAnalysis(_Analysis):
     def report(self, report_prefix=config.DEFAULT_REPORT_PREFIX, whitelist=None, blacklist=None):
         m = self.data_model
 
+        expression_list = [
+            m.experiment_id.in_(self.experiment_ids_included),
+            m.id.not_in(self.filtered_out),
+        ]
+
+        if whitelist:
+            expression_list.append(m.uniprot.in_(whitelist))
+
+        if blacklist:
+            expression_list.append(m.uniprot.not_in(blacklist))
+
+        where_expression = reduce(operator.and_, expression_list)
+
         query = (m
             .select(
                 m.id,
@@ -231,10 +244,7 @@ class SilacAnalysis(_Analysis):
                 m.symbol,
                 m.ratio,
             )
-            .where(
-                (m.experiment_id.in_(self.experiment_ids_included)) &
-                (m.id.not_in(self.filtered_out))
-            )
+            .where(where_expression)
         )
 
         df = pd.DataFrame.from_records(list(query.dicts()))
