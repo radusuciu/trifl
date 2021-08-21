@@ -376,7 +376,7 @@ class SilacAnalysis(_Analysis):
         df.set_index(['_id', 'experiment', 'condition']).sort_index(level=0).to_excel(report_output_path)
         return df
     
-    def unfiltered_report(self, report_output_prefix: str):
+    def unfiltered_report(self):
         m = self.data_model
 
         query = (m
@@ -407,9 +407,14 @@ class SilacAnalysis(_Analysis):
 
         df = df.set_index(['uniprot', 'symbol', 'description', 'condition', 'experiment']).sort_index(level=0)
 
+        report_output_name_template = 'unfiltered_{}_{}_{{}}.xlsx'.format(
+            self.name,
+            self._analysis.id
+        )
+
         report_output_path = utils.get_timestamped_report_path(
-            f'unfiltered_{report_output_prefix}_{{}}.xlsx',
-            pathlib.Path(self.params.output_folder),
+            report_output_name_template,
+            self.output_path
         )
 
         df.to_excel(report_output_path, encoding='utf-8-sig')
