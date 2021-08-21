@@ -375,6 +375,45 @@ class SilacAnalysis(_Analysis):
         # # df.set_index(['seq_id', 'condition', 'experiment']).sort_index(level=0).to_excel(report_output_path)
         df.set_index(['_id', 'experiment', 'condition']).sort_index(level=0).to_excel(report_output_path)
         return df
+    
+    def unfiltered_report(self, report_output_prefix: str):
+        m = self.data_model
+
+        query = (m
+            .select(
+                m.id,
+                m.experiment,
+                m.uniprot,
+                m.symbol,
+                m.description,
+                m.sequence,
+                m.mass,
+                m.charge,
+                m.rsquared,
+                m.ratio,
+            )
+            .where(
+                m.experiment_id.in_(self.experiment_ids_included)
+            )
+        )
+
+        df = pd.DataFrame.from_records(list(query.dicts()))
+
+        for dataset in self.datasets:
+            df.loc[df.experiment.isin(dataset.experiment_ids_included), 'condition'] = dataset.name
+
+        df = df[~df.uniprot.str.startswith('Reverse_')]
+        df['description'] = df.description.str.split().str[1:].str.join(' ')
+
+        df = df.set_index(['uniprot', 'symbol', 'description', 'condition', 'experiment']).sort_index(level=0)
+
+        report_output_path = utils.get_timestamped_report_path(
+            f'unfiltered_{report_output_prefix}_{{}}.xlsx',
+            pathlib.Path(self.params.output_folder),
+        )
+
+        df.to_excel(report_output_path, encoding='utf-8-sig')
+        return df
 
 
 def analyze_tmt(analysis_params: dict):
