@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "trifl"
-version = "0.1.3"
+version = "0.1.4"
 description = "TRIFL is a data filtration library for MS-proteomics experiments."
 authors = ["Radu Suciu <radusuciu@gmail.com>"]
 license = "MIT"

@@ -307,7 +307,7 @@ class SilacAnalysis(_Analysis):
         result_df.to_csv(report_output_path, index=False, encoding='utf-8-sig')
         return result_df
 
-    def filter_report(self):
+    def filter_report(self, merge_cells=True):
         datasets_to_filter = self.experiment_ids_included
 
         m = self.data_model
@@ -373,10 +373,10 @@ class SilacAnalysis(_Analysis):
         )
 
         # # df.set_index(['seq_id', 'condition', 'experiment']).sort_index(level=0).to_excel(report_output_path)
-        df.set_index(['_id', 'experiment', 'condition']).sort_index(level=0).to_excel(report_output_path)
+        df.set_index(['_id', 'experiment', 'condition']).sort_index(level=0).to_excel(report_output_path, merge_cells=merge_cells)
         return df
     
-    def unfiltered_report(self):
+    def unfiltered_report(self, merge_cells=True):
         m = self.data_model
 
         query = (m
@@ -417,7 +417,7 @@ class SilacAnalysis(_Analysis):
             self.output_path
         )
 
-        df.to_excel(report_output_path, encoding='utf-8-sig')
+        df.to_excel(report_output_path, encoding='utf-8-sig', merge_cells=merge_cells)
         return df
 
 
