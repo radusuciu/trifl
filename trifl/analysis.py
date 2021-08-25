@@ -140,7 +140,7 @@ class TmtAnalysis(_Analysis):
             fasta_db_path=self.fasta_db_path
         ) for dataset in datasets]
 
-    def report(self, report_prefix=config.DEFAULT_REPORT_PREFIX):
+    def report(self, report_prefix=config.DEFAULT_REPORT_PREFIX, output_callback=None):
         m = self.data_model
         d = self.datasets[0]
 
@@ -196,8 +196,11 @@ class TmtAnalysis(_Analysis):
             self.output_path
         )
 
-        result_df.to_csv(report_output_path, index=False, encoding='utf-8-sig')
-        return result_df
+        if output_callback:
+            df = output_callback(df)
+
+        df.to_csv(report_output_path, index=False, encoding='utf-8-sig')
+        return df
 
     def filter_report(self, filename: str = ''):
         pass
@@ -220,7 +223,7 @@ class SilacAnalysis(_Analysis):
             dta_folder_name=dataset.get('dta_folder_name', self.params.dta_folder_name),
         ) for dataset in datasets]
 
-    def report(self, report_prefix=config.DEFAULT_REPORT_PREFIX, whitelist=None, blacklist=None):
+    def report(self, report_prefix=config.DEFAULT_REPORT_PREFIX, whitelist=None, blacklist=None, output_callback=None):
         m = self.data_model
 
         expression_list = [
@@ -303,6 +306,9 @@ class SilacAnalysis(_Analysis):
             report_output_name_template,
             self.output_path
         )
+
+        if output_callback:
+            result_df = output_callback(result_df)
 
         result_df.to_csv(report_output_path, index=False, encoding='utf-8-sig')
         return result_df
